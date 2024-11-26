@@ -17,7 +17,8 @@ Follow these steps to set up your Docker environment using the `bootstrap.sh` sc
    ```
    The script will automatically set up and initialize the environment.
 
-> [!WARNING] **Important Notes During the Bootstrap Process**:
+> [!WARNING]
+> **Important Notes During the Bootstrap Process**:
 >    - **Langfuse Setup**:<br>
 >      The bootstrap will wait for you to:
 >        1. Create an account on the Langfuse UI at [http://localhost:3000](http://localhost:3000).

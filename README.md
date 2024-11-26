@@ -4,7 +4,7 @@ Welcome to the RAG Playground Environment! This guide will help you quickly set 
 
 ## Prerequisites
 Before we get started, make sure you have the following ready:
-- [x] Install Docker if it's not already installed, and ensure it's running.
+- [ ] Install Docker if it's not already installed, and ensure it's running.
 
 ---
 
@@ -13,53 +13,38 @@ Follow these steps to set up your Docker environment using the `bootstrap.sh` sc
 
 1) **Run the bootstrap script**:
    ```bash
-   chmod +x bootstrap.sh
-   ./bootstrap.sh
+   sh bootstrap.sh
    ```
-   This script will:
-   - Start all necessary containers in the correct sequence.
-   - Ensure dependencies are initialized and ready.
-   - Ask for input (like the Ollama model name) where needed.
+   The script will automatically set up and initialize the environment.
 
-2) **Confirm services are running**:
-   The script will verify each service is up and running. To double-check, you can run:
-   ```bash
-   docker ps
-   ```
-   You should see all containers listed as running.
+> [!WARNING]
+> **Important Notes During the Bootstrap Process**:
+>    - **Langfuse Setup**:<br>
+>      The bootstrap will wait for you to:
+>        1. Create an account on the Langfuse UI at [http://localhost:3000](http://localhost:3000).
+>        2. Set up an organization and project.
+>        3. Generate and copy the API keys to your `.env` file.
+>        4. Press **Enter** to allow the bootstrap process to continue.<br><br>
+>    - **Ollama Model Download**:<br>
+>    When prompted, provide the name of the Ollama model you want to download (e.g., `llama3.2`).<br> Refer to [Ollama Models](https://ollama.ai/models) for a list of available models.<br><br>
+>    - **Jupyter Notebook Access**:<br>
+>    The bootstrap will display the initial Jupyter URL, including the access token, for you to start coding.
 
----
-
-## Accessing Services
-Here's how to access and configure the key services:
-
-### Jupyter Notebook
-1) **Retrieve the Jupyter access token**:
-   The bootstrap script will provide the Jupyter URL. You can also retrieve it manually by running:
-   ```bash
-   docker-compose logs jupyter | grep "http://127.0.0.1:8888/lab?token="
-   ```
-2) **Open Jupyter**: Paste the URL into your browser to start using Jupyter Lab.
-
-### Langfuse
-1) **Access the Langfuse UI**: Open [http://localhost:3000](http://localhost:3000) in your browser.
-2) **Create your account**: Follow the prompts to set up an account.
-3) **Set up an organization**:  
-   - Click **+ New Organization**.  
-   - Enter a name and click **Create**.
-4) **Create a project**:  
-   - Navigate to the **Setup** page.  
-   - Create a new project.
-5) **Generate an API Key**:  
-   - Go to **Project Settings** > **API Keys**.  
-   - Click **+ Create a new API Key**.  
-   - Copy the key details in OpenAI format and paste them into your `.env` file.
-
-After updating the `.env` file, restart the environment for changes to take effect.
-
-### Ollama
-1) **Provide the model name during bootstrap**:
-   The bootstrap script will prompt you to enter the Ollama model name (e.g., `llama3.2`) and automatically pull it.
+> [!TIP]
+> **Confirm Services Are Running**: 
+> After the bootstrap completes, verify that all containers are running using: 
+> ```bash
+>   docker ps
+>   ```
+> You should see something like this
+> ```
+> CONTAINER ID   IMAGE                          COMMAND                  CREATED          STATUS                    PORTS                              NAMES
+> e88c52ae61f0   jupyter/base-notebook:latest   "tini -g -- sh -c 'p…"   47 minutes ago   Up 47 minutes (healthy)   0.0.0.0:8888->8888/tcp             jupyter
+> 2c69524d1c9c   ollama/ollama:latest           "/bin/ollama serve"      47 minutes ago   Up 47 minutes             0.0.0.0:11434->11434/tcp           ollama
+> bffb987a6a68   qdrant/qdrant:v1.12.4          "./entrypoint.sh"        47 minutes ago   Up 47 minutes             0.0.0.0:6333->6333/tcp, 6334/tcp   qdrant
+> 0dae0bada025   langfuse/langfuse:latest       "dumb-init -- ./web/…"   47 minutes ago   Up 47 minutes             0.0.0.0:3000->3000/tcp             langfuse
+> 03d67516bb8f   postgres:12.22                 "docker-entrypoint.s…"   47 minutes ago   Up 47 minutes             5432/tcp                           postgres
+> ```
 
 ---
 

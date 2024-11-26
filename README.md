@@ -30,11 +30,22 @@ Follow these steps to set up your Docker environment using the `bootstrap.sh` sc
 >    - **Jupyter Notebook Access**:<br>
 >    The bootstrap will display the initial Jupyter URL, including the access token, for you to start coding.
 
-2) **Confirm Services Are Running**:
-   After the bootstrap completes, verify that all containers are running using:
-   ```bash
-   docker ps
-   ```
+> [!TIP]
+> **Confirm Services Are Running**: 
+> After the bootstrap completes, verify that all containers are running using: 
+> ```bash
+>   docker ps
+>   ```
+> You should see something like this
+> ```
+> CONTAINER ID   IMAGE                          COMMAND                  CREATED          STATUS                    PORTS                              NAMES
+> e88c52ae61f0   jupyter/base-notebook:latest   "tini -g -- sh -c 'p…"   47 minutes ago   Up 47 minutes (healthy)   0.0.0.0:8888->8888/tcp             jupyter
+> 2c69524d1c9c   ollama/ollama:latest           "/bin/ollama serve"      47 minutes ago   Up 47 minutes             0.0.0.0:11434->11434/tcp           ollama
+> bffb987a6a68   qdrant/qdrant:v1.12.4          "./entrypoint.sh"        47 minutes ago   Up 47 minutes             0.0.0.0:6333->6333/tcp, 6334/tcp   qdrant
+> 0dae0bada025   langfuse/langfuse:latest       "dumb-init -- ./web/…"   47 minutes ago   Up 47 minutes             0.0.0.0:3000->3000/tcp             langfuse
+> 03d67516bb8f   postgres:12.22                 "docker-entrypoint.s…"   47 minutes ago   Up 47 minutes             5432/tcp                           postgres
+> ```
+
 ---
 
 ## You're All Set! 🎉

@@ -1,44 +1,32 @@
+
 # RAG Playground Environment
 Welcome to the RAG Playground Environment! This guide will help you quickly set up and explore the components of your environment. **Let's dive in! 🚀**
 
 ## Prerequisites
 Before we get started, make sure you have the following ready:
-- [ ] Install Docker if it's not already installed, and ensure it's running.
+- [x] Install Docker if it's not already installed, and ensure it's running.
 
 ---
 
 ## Initializing the Environment
-Follow these steps to set up your Docker environment:
-1) **Stop and clean up any existing containers**:
-   ```bash  
-   docker-compose down --remove-orphans
-   ```
-   This ensures no residual containers interfere with your setup.<br><br>
+Follow these steps to set up your Docker environment using the `bootstrap.sh` script:
 
-2) **Build the Docker images**:
+1) **Run the bootstrap script**:
    ```bash
-   docker-compose build
+   chmod +x bootstrap.sh
+   ./bootstrap.sh
    ```
-   This step creates the necessary images as defined in your `docker-compose.yml`.<br><br>
-3) **Start the containers**:
-   ```bash
-   docker-compose up -d
-   ```
-   This pulls missing images, starts all services, and sets up the volumes and network.<br><br>
+   This script will:
+   - Start all necessary containers in the correct sequence.
+   - Ensure dependencies are initialized and ready.
+   - Ask for input (like the Ollama model name) where needed.
 
-To ensure all the containers are up, run:
-```bash
-docker ps
-```
-You should see something similar to this:
-```
-CONTAINER ID   IMAGE                          COMMAND                  CREATED             STATUS                    PORTS                              NAMES
-134440357fe0   jupyter/base-notebook:latest   "tini -g -- sh -c 'p…"   About an hour ago   Up 18 minutes (healthy)   0.0.0.0:8888->8888/tcp             jupyter
-cf81f5fa4fba   langfuse/langfuse:latest       "dumb-init -- ./web/…"   About an hour ago   Up About an hour          0.0.0.0:3000->3000/tcp             langfuse
-b59b28bfd5af   ollama/ollama:latest           "/bin/ollama serve"      About an hour ago   Up About an hour          0.0.0.0:11434->11434/tcp           ollama
-a940cd2ffcc3   postgres:12.22                 "docker-entrypoint.s…"   About an hour ago   Up About an hour          5432/tcp                           postgres
-f19ef6d65ae7   qdrant/qdrant:v1.12.4          "./entrypoint.sh"        About an hour ago   Up About an hour          0.0.0.0:6333->6333/tcp, 6334/tcp   qdrant
-```
+2) **Confirm services are running**:
+   The script will verify each service is up and running. To double-check, you can run:
+   ```bash
+   docker ps
+   ```
+   You should see all containers listed as running.
 
 ---
 
@@ -47,10 +35,10 @@ Here's how to access and configure the key services:
 
 ### Jupyter Notebook
 1) **Retrieve the Jupyter access token**:
+   The bootstrap script will provide the Jupyter URL. You can also retrieve it manually by running:
    ```bash
    docker-compose logs jupyter | grep "http://127.0.0.1:8888/lab?token="
    ```
-   Copy the URL with the token from the logs.<br><br>
 2) **Open Jupyter**: Paste the URL into your browser to start using Jupyter Lab.
 
 ### Langfuse
@@ -66,22 +54,12 @@ Here's how to access and configure the key services:
    - Go to **Project Settings** > **API Keys**.  
    - Click **+ Create a new API Key**.  
    - Copy the key details in OpenAI format and paste them into your `.env` file.
-6) **Restart the containers**:  
-   After updating the `.env` file with the Langfuse API key, restart the Jupyter container for the changes to take effect:  
-   ```bash
-   docker-compose down && docker-compose up -d
-    ```
+
+After updating the `.env` file, restart the environment for changes to take effect.
 
 ### Ollama
-1) **Access the Ollama container**:
-   ```bash
-   docker exec -it ollama sh
-   ```
-2) **Download a model**: Run the following command to download a model (for example, llama3.2)
-   ```bash
-   ollama pull llama3.2
-   ```
-   Replace llama3.2 with the model name you want, if necessary.
+1) **Provide the model name during bootstrap**:
+   The bootstrap script will prompt you to enter the Ollama model name (e.g., `llama3.2`) and automatically pull it.
 
 ---
 
@@ -112,7 +90,7 @@ Here are some handy commands for managing your setup:
    ```bash
    docker-compose restart <service_name>
    ```
-5) List the env variables in the container:
+5) List the environment variables in a container:
    ```bash
    docker exec <service_name> printenv
    ```

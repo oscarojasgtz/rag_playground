@@ -6,17 +6,14 @@ services:
       - "8888:8888"
     environment:
       - JUPYTER_ENABLE_LAB=yes
-    env_file:
-      - .env
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - LANGFUSE_HOST=${LANGFUSE_HOST}
+      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY}
+      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY}
     volumes:
       - ./jupyter/notebooks:/home/jovyan/work
-      - qdrant_storage:/qdrant/storage
       - ./requirements.txt:/tmp/requirements.txt
-    networks:
-      - llm-network
     restart: always
-    depends_on:
-      - qdrant
     command:
       ["sh", "-c", "pip install --no-cache-dir -r /tmp/requirements.txt && start-notebook.sh"]
 
@@ -30,8 +27,17 @@ services:
       - QDRANT__SERVICE__LISTEN__PORT=6333
     volumes:
       - qdrant_storage:/qdrant/storage
-    networks:
-      - llm-network
+    restart: always
+
+  postgres:
+    image: postgres:12.22
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_storage:/var/lib/postgresql/data
     restart: always
 
   langfuse:
@@ -40,44 +46,27 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://langfuse_user:langfuse_password@postgres:5432/langfuse_db
-      - NEXTAUTH_SECRET=GRv4uW6ISb9x1t/kYerVy6E/u3y49oElWmwsdPdtxNw=
-      - NEXTAUTH_URL=http://localhost:3000
-      - SALT=O8lRllW0+3ujRLUMHl+GrQ==
+      - LANGFUSE_HOST=${LANGFUSE_HOST}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - SALT=${SALT}
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
     volumes:
       - langfuse_storage:/data
-    networks:
-      - llm-network
     restart: always
     depends_on:
-      - qdrant
       - postgres
-
-  postgres:
-    image: postgres:12.22
-    container_name: postgres
-    environment:
-      - POSTGRES_USER=langfuse_user
-      - POSTGRES_PASSWORD=langfuse_password
-      - POSTGRES_DB=langfuse_db
-    volumes:
-      - postgres_storage:/var/lib/postgresql/data
-    networks:
-      - llm-network
-    restart: always
 
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
     ports:
       - "11434:11434"
+    environment:
+      - OLLAMA_MODELS=${OLLAMA_MODELS}
     volumes:
       - ollama_storage:/data
-    networks:
-      - llm-network
     restart: always
-    depends_on:
-      - qdrant
 
 volumes:
   qdrant_storage:

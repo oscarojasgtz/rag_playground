@@ -54,7 +54,7 @@ Before starting, ensure you have the following:
 >        3. Generate and copy the API keys
 
 > [!TIP]
-> **Confirm Services Are Running**: 
+> **Confirm Services Are Running**<br>
 > After the bootstrap completes, verify that all containers are running using: 
 > ```bash
 >   docker ps
@@ -67,6 +67,13 @@ Before starting, ensure you have the following:
 > bffb987a6a68   qdrant/qdrant:v1.12.4          "./entrypoint.sh"        47 minutes ago   Up 47 minutes             0.0.0.0:6333->6333/tcp, 6334/tcp   qdrant
 > 0dae0bada025   langfuse/langfuse:latest       "dumb-init -- ./web/…"   47 minutes ago   Up 47 minutes             0.0.0.0:3000->3000/tcp             langfuse
 > 03d67516bb8f   postgres:12.22                 "docker-entrypoint.s…"   47 minutes ago   Up 47 minutes             5432/tcp                           postgres
+> ```
+ 
+> [!IMPORTANT]
+> **Jupyter token** <br>
+> At the end of the bootstrap, you will be provided with the Jupyter token, if not, you are always able to run:
+> ```bash
+> docker logs jupyter 2>&1 | grep 'http://127.0.0.1:8888/lab?token='
 > ```
 
 ---
